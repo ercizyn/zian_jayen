@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Geolokasi dan IP</title>
+
+  <style>
+    body{
+      text-align: center;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom, #4facfe, #dbefff);
+      margin: 0;
+      padding: 30px;
+      min-height: 100vh;
+    }
+
+    h2{
+      color: #0d47a1;
+      margin-bottom: 15px;
+    }
+
+    blockquote{
+      background: rgba(255,255,255,0.7);
+      padding: 15px;
+      border-left: 5px solid #1565c0;
+      border-radius: 10px;
+      width: 80%;
+      margin: 0 auto 20px auto;
+      color: #333;
+    }
+
+    p{
+      color: #222;
+      font-size: 16px;
+    }
+
+    button{
+      background: #1565c0;
+      color: white;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+
+    button:hover{
+      background: #0d47a1;
+    }
+
+    #lokasi,#ip{
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #0d47a1;
+    }
+
+    #map{
+      margin-top: 25px;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      width: 100%;
+      height: 400px;
+    }
+  </style>
+
+</head>
+<body>
+
+  <h2>
+    Mengambil data Geolokasi dengan API Google Map dan
+    Alamat IP Perangkat Kita
+  </h2>
+
+  <blockquote>
+    Mengambil data Geolokasi kordinat dan get DOM API
+    maps.google.com untuk menampilkan peta dan
+    Get Alamat IP Perangkat Kita dari API ipify.org
+  </blockquote>
+
+  <p>
+    Klik tombol untuk melihat lokasi di peta
+    dan alamat IP perangkat kamu.
+  </p>
+
+  <button onclick="getLocation()">
+    Klik untuk mendapatkan titik kordinat dan IP perangkat
+  </button>
+
+  <p id="lokasi"></p>
+
+  <p id="ip"></p>
+
+  <div id="map"></div>
+
+  <script>
+
+    const lokasi =
+    document.getElementById("lokasi");
+
+    const ip =
+    document.getElementById("ip");
+
+    const map =
+    document.getElementById("map");
+
+    function getLocation(){
+
+      if(!navigator.geolocation){
+
+        lokasi.innerText =
+        "Browser tidak mendukung geolokasi.";
+
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+
+        (pos)=>{
+
+          const lat = pos.coords.latitude;
+          const lon = pos.coords.longitude;
+
+          lokasi.innerHTML =
+          `Latitude: ${lat}<br>Longitude: ${lon}`;
+
+          map.innerHTML = `
+
+          <iframe
+            width="100%"
+            height="400"
+
+            src="https://maps.google.com/maps?q=${lat},${lon}&z=15&output=embed"
+
+            frameborder="0"
+            allowfullscreen>
+
+          </iframe>
+          `;
+        },
+
+        ()=>{
+
+          lokasi.innerText =
+          "Tidak bisa mengambil lokasi.";
+        }
+      );
+
+      fetch("https://api.ipify.org?format=json")
+
+      .then((res)=>res.json())
+
+      .then((data)=>
+        ip.innerText =
+        "IP Anda: " + data.ip
+      )
+
+      .catch(()=>
+        ip.innerText =
+        "Gagal mengambil IP."
+      );
+    }
+
+  </script>
+
+</body>
+</html>
